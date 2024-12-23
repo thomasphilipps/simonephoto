@@ -1,0 +1,23 @@
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore compiled code
+*.class
+*.pyc
+
+# Ignore sensitive data
+secrets.txt
+
+# Ignore build output
+build/
+dist/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+
+# Ignore node modules
+node_modules
