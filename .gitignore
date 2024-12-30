@@ -21,3 +21,7 @@ dist/
 
 # Ignore node modules
 node_modules
+
+# Ignore local environment files
+.env.dev
+.env.local
