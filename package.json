@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "directories": {
-    "test": "tests"
+    "test": "server/tests"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
