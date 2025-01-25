@@ -1,6 +1,8 @@
-// routes/crud.js
+// This factory returns an object containing generic CRUD functions.
+// It receives a Mongoose Model so it doesn’t depend on a specific one (Dependency Inversion).
 module.exports = (Model) => {
     return {
+        // CREATE
         create: async (req, res) => {
             try {
                 const doc = await Model.create(req.body);
@@ -10,6 +12,7 @@ module.exports = (Model) => {
             }
         },
 
+        // READ ALL
         readAll: async (req, res) => {
             try {
                 const docs = await Model.find();
@@ -19,6 +22,7 @@ module.exports = (Model) => {
             }
         },
 
+        // READ BY ID
         readById: async (req, res) => {
             try {
                 const doc = await Model.findById(req.params.id);
@@ -31,6 +35,7 @@ module.exports = (Model) => {
             }
         },
 
+        // UPDATE
         update: async (req, res) => {
             try {
                 const doc = await Model.findByIdAndUpdate(
@@ -47,13 +52,15 @@ module.exports = (Model) => {
             }
         },
 
+        // DELETE
         delete: async (req, res) => {
             try {
                 const doc = await Model.findByIdAndDelete(req.params.id);
                 if (!doc) {
                     return res.status(404).json({error: 'Not found'});
                 }
-                return res.status(204).send(); // No Content
+                // 204 means No Content
+                return res.status(204).send();
             } catch (error) {
                 return res.status(500).json({error: error.message});
             }
