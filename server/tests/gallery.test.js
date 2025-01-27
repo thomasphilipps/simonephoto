@@ -20,13 +20,12 @@ afterAll(async () => {
 
 describe('Gallery CRUD', () => {
     let createdGalleryId;
+    const pictureId1 = new mongoose.Types.ObjectId();
+    const pictureId2 = new mongoose.Types.ObjectId();
+    const categoryId = new mongoose.Types.ObjectId();
 
     // CREATE
     it('should create a new gallery (POST /api/galleries)', async () => {
-        const pictureId1 = new mongoose.Types.ObjectId();
-        const pictureId2 = new mongoose.Types.ObjectId();
-        const categoryId = new mongoose.Types.ObjectId();
-
         const response = await request(app)
             .post('/api/galleries')
             .send({
@@ -37,7 +36,6 @@ describe('Gallery CRUD', () => {
             });
 
         createdGalleryId = response.body._id;
-        console.log('CREATED GALLERY _id: ', createdGalleryId);
         expect(response.status).toBe(201);
     });
 
@@ -55,6 +53,15 @@ describe('Gallery CRUD', () => {
         expect(response.body._id).toBe(createdGalleryId);
         expect(response.body.title).toBe('Ma première galerie');
     });
+
+    // // READ (GET Pictures by ID)
+    //TODO: Check if it's really necessary
+    //
+    // it('should return an array of the pictures IDs of the gallery with ID (GET /api/galleries/:id/pictures) ', async () => {
+    //     const response = await request(app).get(`/api/galleries/${createdGalleryId}/pictures`);
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toBe([pictureId1, pictureId2])
+    // })
 
     // UPDATE
     it('should update the gallery (PUT /api/galleries/:id)', async () => {

@@ -12,6 +12,8 @@ app.get('/', (req, res) => {
 // 3) ROUTES (Inject 'app' into the routes module)
 const galleryRoutes = require('../routes/gallery.routes');
 galleryRoutes(app);
+const pictureRoutes = require('../routes/picture.routes');
+pictureRoutes(app);
 
 // 4) EXPORT THE CONFIGURED EXPRESS INSTANCE
 module.exports = app;
