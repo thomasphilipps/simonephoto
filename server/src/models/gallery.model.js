@@ -1,31 +1,34 @@
 const mongoose = require('mongoose');
 
-// Define the schema for a "Gallery"
-const gallerySchema = new mongoose.Schema({
+const gallerySchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
+      type: String,
+      required: [true, 'Le titre de la galerie est requis'],
+      trim: true
     },
     description: {
-        type: String,
-        required: true,
+      type: String,
+      required: [true, 'La description de la galerie est requise'],
+      trim: true
     },
     date: {
-        type: Date,
+      type: Date
     },
-    created_at: {
-        type: Date,
-        default: Date.now,
-    },
-    pictures: [{
+    pictures: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Picture',
-    }],
-    categories: [{
+        ref: 'Picture'
+      }
+    ],
+    categories: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-    }]
-}, {timestamps: true});
+        ref: 'Category'
+      }
+    ]
+  },
+  {timestamps: true}
+);
 
-// Export the compiled Mongoose model
 module.exports = mongoose.model('Gallery', gallerySchema);

@@ -1,24 +1,36 @@
 const mongoose = require('mongoose');
 
-const pictureSchema = new mongoose.Schema({
+const pictureSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: [true, `Le titre de l'image est requis`]
+      type: String,
+      required: [true, 'Le titre de l’image est requis'],
+      trim: true
     },
-    description: String,
-    created_at: {
-        type: Date,
-        default: Date.now,
+    description: {
+      type: String,
+      trim: true
     },
     uri: {
-        type: String,
-        required: true,
-       // match: /(https?:\/\/.*\.(?:png|jpg))/i
+      type: String,
+      required: [true, 'L’URL de l’image est requise'],
+      trim: true,
+      match: [
+        /^https:\/\/.*\.(?:png|jpg)$/i,
+        'L’URL doit être en HTTPS et pointer vers une image .png ou .jpg'
+      ]
     },
     thumb_uri: {
-        type: String,
-        required: true,
+      type: String,
+      required: [true, 'L’URL de la miniature est requise'],
+      trim: true,
+      match: [
+        /^https:\/\/.*\.(?:png|jpg)$/i,
+        'L’URL doit être en HTTPS et pointer vers une image .png ou .jpg'
+      ]
     }
-}, {timestamps: true})
+  },
+  {timestamps: true}
+);
 
-module.exports=mongoose.model('Picture', pictureSchema);
+module.exports = mongoose.model('Picture', pictureSchema);
