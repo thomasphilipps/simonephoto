@@ -2,31 +2,31 @@
 
 ##
 # Script pour initialiser la base MongoDB via Docker.
-# Usage:
-#   ./init-db.sh              # charge les vars depuis .env par défaut
-#   ./init-db.sh .env.local   # charge les vars depuis .env.local
 ##
 
 # 1) Déterminer le fichier .env à charger (par défaut .env)
 ENV_FILE=${1:-.env}
 
-# 2) Exporter les variables du .env
+# 2) Charger les variables d'environnement
 set -a
 source "$ENV_FILE"
 set +a
 
-# 3) Créer un fichier JS temporaire avec nos commandes mongosh
+# 3) Vérification des variables essentielles
+if [[ -z "$MONGO_DB_NAME" || -z "$MONGO_USER" || -z "$MONGO_PASSWORD" || -z "$MONGO_ROOT_USER" || -z "$MONGO_ROOT_PASSWORD" ]]; then
+  echo "❌ Erreur : certaines variables d'environnement MongoDB ne sont pas définies."
+  exit 1
+fi
+
+# 4) Création du fichier de script MongoDB
 cat <<EOF > init.js
-// On récupère le nom de la DB, l'user et le password à partir des variables d'env
 const dbName = '${MONGO_DB_NAME}';
 const user   = '${MONGO_USER}';
 const pass   = '${MONGO_PASSWORD}';
 
-// Sélection de la DB
 db = db.getSiblingDB(dbName);
 
-// Création des collections si elles n'existent pas déjà
-const collections = ["galleries", "categories", "pictures", "users"];
+const collections = ["galleries", "categories", "pictures", "users", "reviews"];
 collections.forEach(col => {
   if (!db.getCollectionNames().includes(col)) {
     db.createCollection(col);
@@ -34,7 +34,6 @@ collections.forEach(col => {
   }
 });
 
-// Création de l'utilisateur avec rôle readWrite sur la DB
 try {
   db.createUser({
     user: user,
@@ -49,16 +48,30 @@ try {
 }
 EOF
 
-# Copie du fichier dans le conteneur "mongodb" (à la racine par ex.)
-docker compose cp init.js mongodb:/init.js
+# 5) Vérifier que MongoDB est bien en cours d'exécution
+if ! docker compose ps | grep -q mongodb; then
+  echo "❌ MongoDB ne semble pas être démarré. Lancement..."
+  docker compose up -d mongodb
+  sleep 5  # Attente pour que MongoDB démarre correctement
+fi
 
-# 4) Lancement de mongosh dans le container Docker
-#    On utilise -it pour avoir le prompt intercatif et saisir le password root.
+# 6) Vérifier la connexion à MongoDB
+if ! docker compose exec -it mongodb mongosh -u "$MONGO_ROOT_USER" -p "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.runCommand({ connectionStatus: 1 })"; then
+  echo "❌ Échec de connexion à MongoDB. Vérifiez les logs avec 'docker compose logs mongodb'."
+  exit 1
+fi
+
+# 7) Copie du script dans le conteneur
+docker cp init.js $(docker compose ps -q mongodb):/init.js
+
+# 8) Exécution du script dans MongoDB
 docker compose exec -it mongodb mongosh \
     -u "${MONGO_ROOT_USER}" \
-    -p \
+    -p "${MONGO_ROOT_PASSWORD}" \
     --authenticationDatabase admin \
-    init.js
+    /init.js
 
-# 5) Nettoyage du fichier temporaire (optionnel)
+# 9) Nettoyage du fichier temporaire
 rm init.js
+
+echo "✅ Initialisation de la base MongoDB terminée."
