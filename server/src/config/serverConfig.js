@@ -6,7 +6,7 @@ app.use(express.json()); // For JSON body parsing
 
 // 2) SIMPLE ENDPOINT TO TEST SERVER UP
 app.get('/', (req, res) => {
-    res.json('API online');
+  res.json('API online');
 });
 
 // 3) ROUTES (Inject 'app' into the routes module)
@@ -14,6 +14,8 @@ const galleryRoutes = require('../routes/gallery.routes');
 galleryRoutes(app);
 const pictureRoutes = require('../routes/picture.routes');
 pictureRoutes(app);
+const categoryRoutes = require('../routes/category.routes');
+categoryRoutes(app);
 
 // 4) EXPORT THE CONFIGURED EXPRESS INSTANCE
 module.exports = app;
