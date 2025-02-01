@@ -1,0 +1,7 @@
+openapi: 3.0.0
+info:
+  title: Simone Photo API
+  version: 1.0.0
+  description: API documentation for Simone Leguay’s web app
+paths: {}
+components: {}

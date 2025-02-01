@@ -1,0 +1,119 @@
+paths:
+  /api/galleries:
+    get:
+      summary: Retrieve all galleries
+      operationId: getGalleries
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Create a new gallery
+      operationId: createGallery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GalleryCreate'
+      responses:
+        201:
+          description: Created
+        400:
+          description: Validation error
+
+  /api/galleries/{id}:
+    get:
+      summary: Get a gallery by ID
+      operationId: getGalleryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+    put:
+      summary: Update a gallery
+      operationId: updateGallery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GalleryUpdate'
+      responses:
+        200:
+          description: Updated
+        400:
+          description: Bad Request
+        404:
+          description: Not found
+    delete:
+      summary: Delete a gallery
+      operationId: deleteGallery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not found
+
+components:
+  schemas:
+    GalleryCreate:
+      type: object
+      required:
+        - title
+        - description
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        pictures:
+          type: array
+          items:
+            type: string
+            description: "ObjectId referencing a Picture"
+        categories:
+          type: array
+          items:
+            type: string
+            description: "ObjectId referencing a Category"
+
+    GalleryUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        pictures:
+          type: array
+          items:
+            type: string
+        categories:
+          type: array
+          items:
+            type: string
