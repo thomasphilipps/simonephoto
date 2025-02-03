@@ -26,6 +26,15 @@ const gallerySchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
       }
+    ],
+    isPrivate: {
+      type: Boolean,
+      default: false
+    },
+    allowedCustomers: [
+      {
+        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+      }
     ]
   },
   {timestamps: true}
