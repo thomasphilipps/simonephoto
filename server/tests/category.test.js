@@ -24,7 +24,6 @@ describe('Category Tree building', () => {
   beforeEach(async () => {
     await Category.deleteMany({});
 
-
     // Create some categories manually
     const rootCategory = await Category.create({
       title: 'Root category',
@@ -65,7 +64,5 @@ describe('Category Tree building', () => {
     expect(subChildren.length).toBe(1);
     expect(subChildren[0].children.length).toBe(0);
     expect(subChildren[0].title).toBe('SubChild Category');
-
   });
-
 });

@@ -22,6 +22,8 @@ const categoryRoutes = require('../routes/category.routes');
 categoryRoutes(app);
 const reviewRoutes = require('../routes/review.routes');
 reviewRoutes(app);
+const userRoutes = require('../routes/user.routes');
+userRoutes(app);
 
 // 4) EXPORT THE CONFIGURED EXPRESS INSTANCE
 module.exports = app;

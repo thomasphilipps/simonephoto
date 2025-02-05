@@ -34,7 +34,7 @@ describe('Picture CRUD', () => {
   });
 
   // READ (GET ALL)
-  it('should return all pictures (GET /api/pictures) ', async () => {
+  it('should return all pictures (GET /api/pictures)', async () => {
     const response = await request(app).get('/api/pictures');
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
