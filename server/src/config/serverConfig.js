@@ -1,29 +1,27 @@
-const express = require('express');
+import express from 'express';
+import database from './database.js';
+import galleryRoutes from '../routes/gallery.routes.js';
+import pictureRoutes from '../routes/picture.routes.js';
+import categoryRoutes from '../routes/category.routes.js';
+import reviewRoutes from '../routes/review.routes.js';
+import userRoutes from '../routes/user.routes.js';
+
 const app = express();
 
 if (process.env.NODE_ENV !== 'test') {
-  require('./database');
+  await database();
 }
 
-// 1) GLOBAL MIDDLEWARES
-app.use(express.json()); // For JSON body parsing
+app.use(express.json());
 
-// 2) SIMPLE ENDPOINT TO TEST SERVER UP
 app.get('/', (req, res) => {
   res.json('API online');
 });
 
-// 3) ROUTES (Inject 'app' into the routes module)
-const galleryRoutes = require('../routes/gallery.routes');
 galleryRoutes(app);
-const pictureRoutes = require('../routes/picture.routes');
 pictureRoutes(app);
-const categoryRoutes = require('../routes/category.routes');
 categoryRoutes(app);
-const reviewRoutes = require('../routes/review.routes');
 reviewRoutes(app);
-const userRoutes = require('../routes/user.routes');
 userRoutes(app);
 
-// 4) EXPORT THE CONFIGURED EXPRESS INSTANCE
-module.exports = app;
+export default app;

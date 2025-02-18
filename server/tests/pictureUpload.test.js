@@ -1,24 +1,19 @@
-const request = require('supertest');
-const mongoose = require('mongoose');
-const fs = require('mz/fs');
-const {MongoMemoryServer} = require('mongodb-memory-server');
-const app = require('../src/config/serverConfig');
+import request from 'supertest';
+import mongoose from 'mongoose';
+import app from '../src/config/serverConfig.js';
+import path from 'path';
+import fs from 'mz/fs';
 
-let mongoServer;
-
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  await mongoose.connect(mongoServer.getUri(), {});
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+beforeEach(async () => {
+  // Clear all collections before each test
+  const collections = mongoose.connection.collections;
+  for (const key in collections) {
+    await collections[key].deleteMany({});
+  }
 });
 
 describe('Picture Upload', () => {
 
-  const testFilePath = __dirname + '/fixtures/upload';
   // 1. Test for validating the uploaded image:
   //    - Verify that an error is returned if no file is provided.
   //    - Verify that an error is returned if the file format is not supported (e.g., other than PNG or JPG).
@@ -31,10 +26,10 @@ describe('Picture Upload', () => {
     expect(response.body.error).toBe('No file provided');
   });
 
-  /* it('should return an error if the file format is not supported', async () => {
+  it('should return an error if the file format is not supported', async () => {
     const response = await request(app)
       .post('/api/pictures/upload')
-      .attach('image', testFilePath)
+      .attach('image', path.join(__dirname, 'fixtures', 'wrongFormatImage.gif'))
       .expect(415);
 
     expect(response.body.error).toBe('Unsupported file format');
@@ -43,15 +38,31 @@ describe('Picture Upload', () => {
   it('should return an error if the MIME type and extension do not match', async () => {
     const response = await request(app)
       .post('/api/pictures/upload')
-      .attach('image', path.join(__dirname, 'testfiles', 'fakejpg.png')) // Assuming you have a fakejpg.png file
+      .attach('image', path.join(__dirname, 'fixtures', 'fakejpg.jpg'))
       .expect(415);
 
-    expect(response.body.error).toBe('Unsupported file format');
-  }); */
+    expect(response.body.error).toBe('MIME type and file extension do not match');
+  });
 
 // 2. Test for file size verification:
 //    - Verify that the upload rejects a file whose size exceeds the defined limit.
 //    - Ensure that the system correctly handles overly large files.
+
+  it('should return an error if the file is too large', async () => {
+    // Creating fake file
+    const largeFilePath = path.join(__dirname, 'fixtures', 'fake.jpg');
+    fs.writeFileSync(largeFilePath, Buffer.alloc(6 * 1024 * 1024));
+
+    const response = await request(app)
+      .post('/api/pictures/upload')
+      .attach('image', largeFilePath)
+      .expect(413);
+
+    expect(response.body.error).toBe('File size exceeds the allowed limit');
+
+    // Clean up the test file
+    fs.unlinkSync(largeFilePath);
+  });
 
 // 3. Test for generating a unique filename:
 //    - Verify that the uploaded file's name is generated uniquely (e.g., using a UUID or timestamp).

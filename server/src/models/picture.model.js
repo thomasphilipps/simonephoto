@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const pictureSchema = new mongoose.Schema(
   {
@@ -33,4 +33,4 @@ const pictureSchema = new mongoose.Schema(
   {timestamps: true}
 );
 
-module.exports = mongoose.model('Picture', pictureSchema);
+export default mongoose.model('Picture', pictureSchema);

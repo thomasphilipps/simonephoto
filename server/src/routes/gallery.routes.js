@@ -1,14 +1,14 @@
-const Gallery = require('../models/gallery.model');
-const crud = require('../controllers/crud')(Gallery);
-const galleryController = require('../controllers/galleryController')();
+import Gallery from '../models/gallery.model.js';
+import crud from '../controllers/crud.js';
+import galleryController from '../controllers/galleryController.js';
 
-module.exports = (app) => {
-  // Bind each CRUD action to an endpoint
-  app.post('/api/galleries', crud.create);
-  app.get('/api/galleries', crud.readAll);
-  app.get('/api/galleries/:id', galleryController.getGalleryById);
-  app.put('/api/galleries/:id', crud.update);
-  app.delete('/api/galleries/:id', crud.delete);
+const galleryCtrl = galleryController();
+const galleryCrud = crud(Gallery);
 
+export default (app) => {
+  app.post('/api/galleries', galleryCrud.create);
+  app.get('/api/galleries', galleryCrud.readAll);
+  app.get('/api/galleries/:id', galleryCtrl.getGalleryById);
+  app.put('/api/galleries/:id', galleryCrud.update);
+  app.delete('/api/galleries/:id', galleryCrud.delete);
 };
-

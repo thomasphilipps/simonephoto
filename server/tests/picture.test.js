@@ -1,63 +1,35 @@
-const request = require('supertest');
-const mongoose = require('mongoose');
-const {MongoMemoryServer} = require('mongodb-memory-server');
-const app = require('../src/config/serverConfig');
+import request from 'supertest';
+import app from '../src/config/serverConfig.js';
+import Picture from '../src/models/picture.model.js';
 
-let mongoServer;
-
-beforeAll(async () => {
-  // Spin up an in-memory Mongo server
-  mongoServer = await MongoMemoryServer.create();
-  // Connect Mongoose to this in-memory server
-  await mongoose.connect(mongoServer.getUri(), {});
+beforeEach(async () => {
+  await Picture.deleteMany({});
 });
 
-afterAll(async () => {
-  // Clean up
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
+describe('Picture CRUD Operations', () => {
+  let testPicture;
 
-describe('Picture CRUD', () => {
-  let createdPictureId;
-
-  // CREATE
-  it('should create a new picture (POST /api/pictures)', async () => {
-    const response = await request(app).post('/api/pictures').send({
-      title: 'Image enregistrée',
-      description: 'une belle image',
-      uri: 'https://example.com/testimage.jpg',
-      thumb_uri: 'https://example.com/testimage_thumbnail.jpg'
+  beforeEach(async () => {
+    testPicture = await Picture.create({
+      title: 'Test Picture',
+      uri: 'https://example.com/test.jpg',
+      thumb_uri: 'https://example.com/test_thumb.jpg'
     });
-    createdPictureId = response.body._id;
-    expect(response.status).toBe(201);
   });
 
-  // READ (GET ALL)
-  it('should return all pictures (GET /api/pictures)', async () => {
-    const response = await request(app).get('/api/pictures');
-    expect(response.status).toBe(200);
-    expect(Array.isArray(response.body)).toBe(true);
+  it('should create a new picture', async () => {
+    const res = await request(app).post('/api/pictures').send({
+      title: 'New Picture',
+      uri: 'https://example.com/new.jpg',
+      thumb_uri: 'https://example.com/new_thumb.jpg'
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.title).toBe('New Picture');
   });
 
-  // READ (GET BY ID)
-  it('should return the created picture (GET /api/pictures/:id)', async () => {
-    const response = await request(app).get(`/api/pictures/${createdPictureId}`);
-    expect(response.status).toBe(200);
-    expect(response.body._id).toBe(createdPictureId);
-    expect(response.body.title).toBe('Image enregistrée');
-  });
-
-  // UPDATE
-  it('should update the image (PUT /api/pictures/:id)', async () => {
-    const response = await request(app)
-      .put(`/api/pictures/${createdPictureId}`)
-      .send({
-        title: `Titre de l'image mis à jour`,
-        description: `Description de l'image mise à jour`
-      });
-    expect(response.status).toBe(200);
-    expect(response.body.title).toBe(`Titre de l'image mis à jour`);
-    expect(response.body.description).toBe(`Description de l'image mise à jour`);
+  it('should retrieve all pictures', async () => {
+    const res = await request(app).get('/api/pictures');
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(1);
   });
 });

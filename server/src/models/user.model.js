@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, `Le mot de passe est obligatoire`]
-      //TODO: handle password strength in frontend
     },
     name: {
       type: String,
@@ -28,4 +27,4 @@ const userSchema = new mongoose.Schema(
   {timestamps: true}
 );
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

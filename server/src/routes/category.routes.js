@@ -1,12 +1,14 @@
-const Category = require('../models/category.model');
-const crud = require('../controllers/crud')(Category);
-const categoryController = require('../controllers/categoryController')();
+import Category from '../models/category.model.js';
+import crud from '../controllers/crud.js';
+import categoryController from '../controllers/categoryController.js';
 
-module.exports = (app) => {
-  app.post('/api/categories', crud.create);
-  app.get('/api/categories', crud.readAll);
-  app.put('/api/categories/:id', crud.update);
-  app.delete('/api/categories/:id', crud.delete);
+const categoryCtrl = categoryController();
+const categoryCrud = crud(Category);
 
-  app.get('/api/categories/tree', categoryController.getCategoryTree);
+export default (app) => {
+  app.post('/api/categories', categoryCrud.create);
+  app.get('/api/categories', categoryCrud.readAll);
+  app.put('/api/categories/:id', categoryCrud.update);
+  app.delete('/api/categories/:id', categoryCrud.delete);
+  app.get('/api/categories/tree', categoryCtrl.getCategoryTree);
 };

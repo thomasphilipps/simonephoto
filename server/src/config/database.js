@@ -1,22 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-// Environment related connexion URI
-const mongoUri =
-  process.env.NODE_ENV === 'production'
-    ? `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/${process.env.MONGO_DB_NAME}?retryWrites=true&w=majority&appName=arcadia-zoo`
-    : `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/${process.env.MONGO_DB_NAME}`;
+const {NODE_ENV, MONGO_USER, MONGO_PASSWORD, MONGO_HOST, MONGO_DB_NAME} = process.env;
 
-// MongoDB connexion
+const mongoUri = NODE_ENV === 'production'
+  ? `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB_NAME}?retryWrites=true&w=majority&appName=arcadia-zoo`
+  : `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB_NAME}`;
+
 mongoose.connect(mongoUri);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (NODE_ENV !== 'production') {
     console.log('Connected to MongoDB');
   }
 });
 
-// Export the connexion object
-// TODO: optional, see if it's useful
-module.exports = db;
+export default db;

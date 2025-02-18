@@ -1,21 +1,13 @@
-const request = require('supertest');
-const mongoose = require('mongoose');
-const {MongoMemoryServer} = require('mongodb-memory-server');
-const app = require('../src/config/serverConfig');
+import request from 'supertest';
+import mongoose from 'mongoose';
+import app from '../src/config/serverConfig.js';
 
-let mongoServer;
-
-beforeAll(async () => {
-  // Spin up an in-memory Mongo server
-  mongoServer = await MongoMemoryServer.create();
-  // Connect Mongoose to this in-memory server
-  await mongoose.connect(mongoServer.getUri(), {});
-});
-
-afterAll(async () => {
-  // Clean up
-  await mongoose.disconnect();
-  await mongoServer.stop();
+beforeEach(async () => {
+  // Clear all collections before each test
+  const collections = mongoose.connection.collections;
+  for (const key in collections) {
+    await collections[key].deleteMany({});
+  }
 });
 
 describe('Gallery CRUD', () => {

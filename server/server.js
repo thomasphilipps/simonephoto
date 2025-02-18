@@ -1,16 +1,11 @@
-// We import the Express app instance from serverConfig.js
-const app = require('./src/config/serverConfig');
+import app from './src/config/serverConfig.js';
 
-// Read environment variables (port, host)
-const api_port = process.env.PORT;
-const api_host = process.env.HOST;
+const {PORT, HOST} = process.env;
 
-// Only start listening if we're not in test mode
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(api_port, () => {
-    // In non-production, log server info for debugging
+  app.listen(PORT, () => {
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`Node server listening on ${api_host}:${api_port}`);
+      console.log(`Node server listening on ${HOST}:${PORT}`);
     }
   });
 }

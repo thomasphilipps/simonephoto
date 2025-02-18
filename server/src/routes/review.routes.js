@@ -1,12 +1,12 @@
-const Review = require('../models/review.model');
-const crud = require('../controllers/crud')(Review);
+import Review from '../models/review.model.js';
+import crud from '../controllers/crud.js';
 
-module.exports = (app) => {
-  // Bind each CRUD action to an endpoint
-  app.post('/api/reviews', crud.create);
-  app.get('/api/reviews', crud.readAll);
-  app.get('/api/reviews/:id', crud.readById);
-  app.put('/api/reviews/:id', crud.update);
-  app.delete('/api/reviews/:id', crud.delete);
+const reviewCrud = crud(Review);
 
+export default (app) => {
+  app.post('/api/reviews', reviewCrud.create);
+  app.get('/api/reviews', reviewCrud.readAll);
+  app.get('/api/reviews/:id', reviewCrud.readById);
+  app.put('/api/reviews/:id', reviewCrud.update);
+  app.delete('/api/reviews/:id', reviewCrud.delete);
 };

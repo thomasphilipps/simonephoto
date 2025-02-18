@@ -1,18 +1,17 @@
-const Picture = require('../models/picture.model');
-// We inject our Gallery model into the CRUD factory:
-const crud = require('../controllers/crud')(Picture);
-const multer = require('multer');
+import Picture from '../models/picture.model.js';
+import crud from '../controllers/crud.js';
+import multer from 'multer';
+import pictureController from '../controllers/pictureController.js';
+
 const upload = multer();
-const pictureController = require('../controllers/pictureController')();
+const pictureCtrl = pictureController();
+const pictureCrud = crud(Picture);
 
-module.exports = (app) => {
-  // Bind each CRUD action to an endpoint
-  app.post('/api/pictures', crud.create);
-  app.get('/api/pictures', crud.readAll);
-  app.get('/api/pictures/:id', crud.readById);
-  app.put('/api/pictures/:id', crud.update);
-  app.delete('/api/pictures/:id', crud.delete);
-  app.post('/api/pictures/upload', upload.single('image'), pictureController.uploadImage);
-
+export default (app) => {
+  app.post('/api/pictures', pictureCrud.create);
+  app.get('/api/pictures', pictureCrud.readAll);
+  app.get('/api/pictures/:id', pictureCrud.readById);
+  app.put('/api/pictures/:id', pictureCrud.update);
+  app.delete('/api/pictures/:id', pictureCrud.delete);
+  app.post('/api/pictures/upload', upload.single('image'), pictureCtrl.uploadImage);
 };
-

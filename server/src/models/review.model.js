@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -17,9 +17,7 @@ const reviewSchema = new mongoose.Schema(
       required: [true, 'L’email est requis'],
       trim: true,
       validate: {
-        validator: function (v) {
-          return /\S+@\S+\.\S+/.test(v);
-        },
+        validator: (v) => /\S+@\S+\.\S+/.test(v),
         message: (props) => `${props.value} n’est pas un email valide !`
       }
     },
@@ -42,4 +40,4 @@ const reviewSchema = new mongoose.Schema(
   {timestamps: true}
 );
 
-module.exports = mongoose.model('Review', reviewSchema);
+export default mongoose.model('Review', reviewSchema);

@@ -1,12 +1,14 @@
-const crud = require('../controllers/crud')(require('../models/user.model'));
-const userController = require('../controllers/userController');
+import User from '../models/user.model.js';
+import crud from '../controllers/crud.js';
+import userController from '../controllers/userController.js';
 
-module.exports = (app) => {
+const userCrud = crud(User);
+
+export default (app) => {
   app.post('/api/users', userController.createUser);
-  app.get('/api/users', crud.readAll);
-  app.get('/api/users/:id', crud.readById);
-  app.put('/api/users/:id', crud.update);
-  app.delete('/api/users/:id', crud.delete);
-  
+  app.get('/api/users', userCrud.readAll);
+  app.get('/api/users/:id', userCrud.readById);
+  app.put('/api/users/:id', userCrud.update);
+  app.delete('/api/users/:id', userCrud.delete);
   app.post('/api/login', userController.loginUser);
 };
