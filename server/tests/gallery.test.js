@@ -2,8 +2,13 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/config/serverConfig.js';
 
+let createdGalleryId;
+let createdPictureId1;
+let createdPictureId2;
+let categoryId;
+
 beforeEach(async () => {
-  // Clear all collections before each test
+  // Nettoyage de toutes les collections avant chaque test
   const collections = mongoose.connection.collections;
   for (const key in collections) {
     await collections[key].deleteMany({});
@@ -11,13 +16,8 @@ beforeEach(async () => {
 });
 
 describe('Gallery CRUD', () => {
-  let createdGalleryId;
-  let createdPictureId1;
-  let createdPictureId2;
-  let categoryId;
-
-  // CREATE 2 Fakes pictures
-  it('should create two pictures (POST /api/pictures)', async () => {
+  // Création des deux images à utiliser dans les tests de la galerie
+  beforeAll(async () => {
     const pic1 = await request(app).post('/api/pictures').send({
       title: 'Picture #1',
       description: 'La première image',

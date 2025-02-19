@@ -1,5 +1,5 @@
 import express from 'express';
-import database from './database.js';
+import db from './database.js';
 import galleryRoutes from '../routes/gallery.routes.js';
 import pictureRoutes from '../routes/picture.routes.js';
 import categoryRoutes from '../routes/category.routes.js';
@@ -9,7 +9,7 @@ import userRoutes from '../routes/user.routes.js';
 const app = express();
 
 if (process.env.NODE_ENV !== 'test') {
-  await database();
+  await db;
 }
 
 app.use(express.json());
